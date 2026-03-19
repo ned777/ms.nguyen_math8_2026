@@ -467,7 +467,7 @@ footer {
   <!-- HEADER -->
   <header>
     <div class="header-tag">📐 Room 209 · Ms. Nguyen</div>
-    <h1>How's My Grade?</h1>
+    <h1>How is My Grade in Math 8 Honors?</h1>
     <p class="header-sub">Enter your scores and we'll tell you where you stand — and what to do next!</p>
     <div class="weight-legend">
       <span class="chip test">Tests 35%</span>
@@ -486,9 +486,9 @@ footer {
         <div class="card-label">Tests</div>
         <div class="card-weight">35% of grade</div>
         <div class="score-inputs">
-          <input type="number" id="test-earned" placeholder="Points got" min="0" max="10000">
+          <input type="number" id="test-earned" placeholder="Points" min="0" max="10000">
           <span class="out-of">out of</span>
-          <input type="number" id="test-total" placeholder="Total points" min="0" max="10000">
+          <input type="number" id="test-total" placeholder="Max" min="0" max="10000">
         </div>
         <div class="cat-pct" id="test-pct">—</div>
         <div class="cat-bar-wrap"><div class="cat-bar" id="test-bar"></div></div>
@@ -499,9 +499,9 @@ footer {
         <div class="card-label">Homework</div>
         <div class="card-weight">30% of grade</div>
         <div class="score-inputs">
-          <input type="number" id="hw-earned" placeholder="Points got" min="0" max="10000">
+          <input type="number" id="hw-earned" placeholder="Points" min="0" max="10000">
           <span class="out-of">out of</span>
-          <input type="number" id="hw-total" placeholder="Total points" min="0" max="10000">
+          <input type="number" id="hw-total" placeholder="Max" min="0" max="10000">
         </div>
         <div class="cat-pct" id="hw-pct">—</div>
         <div class="cat-bar-wrap"><div class="cat-bar" id="hw-bar"></div></div>
@@ -509,12 +509,12 @@ footer {
 
       <div class="score-card" data-cat="cq">
         <div class="card-emoji">✏️</div>
-        <div class="card-label">Classwork / Quizzes</div>
+        <div class="card-label">Classwork/Quizzes</div>
         <div class="card-weight">25% of grade</div>
         <div class="score-inputs">
-          <input type="number" id="cq-earned" placeholder="Points got" min="0" max="10000">
+          <input type="number" id="cq-earned" placeholder="Points" min="0" max="10000">
           <span class="out-of">out of</span>
-          <input type="number" id="cq-total" placeholder="Total points" min="0" max="10000">
+          <input type="number" id="cq-total" placeholder="Max" min="0" max="10000">
         </div>
         <div class="cat-pct" id="cq-pct">—</div>
         <div class="cat-bar-wrap"><div class="cat-bar" id="cq-bar"></div></div>
@@ -525,9 +525,9 @@ footer {
         <div class="card-label">Projects</div>
         <div class="card-weight">10% of grade</div>
         <div class="score-inputs">
-          <input type="number" id="proj-earned" placeholder="Points got" min="0" max="10000">
+          <input type="number" id="proj-earned" placeholder="Points" min="0" max="10000">
           <span class="out-of">out of</span>
-          <input type="number" id="proj-total" placeholder="Total points" min="0" max="10000">
+          <input type="number" id="proj-total" placeholder="Max" min="0" max="10000">
         </div>
         <div class="cat-pct" id="proj-pct">—</div>
         <div class="cat-bar-wrap"><div class="cat-bar" id="proj-bar"></div></div>
@@ -730,17 +730,13 @@ function showWeakness(percents) {
   let msg = '';
 
   if (weakPct < 60) {
-    msg = `Your <strong>${weakest.name}</strong> score is at ${weakPct.toFixed(0)}% — that's the biggest thing hurting your grade right now. `;
-    msg += `Since it counts for ${(weakest.weight * 100).toFixed(0)}% of your total grade, fixing this could add up to <strong>${potentialGain.toFixed(1)} points</strong> to your overall grade. `;
-    msg += `This should be your #1 focus!`;
+    msg = `Your <strong>${weakest.name}</strong> is at ${weakPct.toFixed(1)}% right now — that's your lowest category. This is your #1 thing to work on! 💪`;
   } else if (weakPct < 70) {
-    msg = `Your <strong>${weakest.name}</strong> is your weakest area at ${weakPct.toFixed(0)}%. `;
-    msg += `You need at least 70% to pass the class (a C). Bringing this up could add up to <strong>${potentialGain.toFixed(1)} points</strong> to your overall.`;
+    msg = `Your <strong>${weakest.name}</strong> is at ${weakPct.toFixed(1)}% — that's below passing. Focus on bringing this up first!`;
   } else if (weakPct < 80) {
-    msg = `Your <strong>${weakest.name}</strong> is the lowest at ${weakPct.toFixed(0)}%, but you're passing! `;
-    msg += `Pushing it to 80% could add <strong>${((80 - weakPct) * weakest.weight).toFixed(1)} points</strong> to your grade.`;
+    msg = `Your <strong>${weakest.name}</strong> is your lowest at ${weakPct.toFixed(1)}%, but you're passing! Push a little harder here to level up your grade.`;
   } else {
-    msg = `All your categories look solid! Your lowest is <strong>${weakest.name}</strong> at ${weakPct.toFixed(0)}% — not bad at all! Keep pushing.`;
+    msg = `All your categories look solid! Your lowest is <strong>${weakest.name}</strong> at ${weakPct.toFixed(1)}% — not bad at all! Keep it up.`;
   }
 
   textEl.innerHTML = msg;
@@ -793,12 +789,12 @@ function showGoals(percents, overall, currentGrade) {
   }
 }
 
-// Figures out which category to focus on — gives concrete point advice
+// Figures out which category to focus on — tells student what % they need in that category
 function getGoalAdvice(percents, overall, target, ptsNeeded) {
   const entered = CATEGORIES.filter(c => percents[c.id] !== null);
   if (entered.length === 0) return 'Enter more scores for advice!';
 
-  // Rank by how much improvement is still possible (impact = room × weight)
+  // Rank by most room to improve × weight (biggest lever)
   const ranked = entered.slice().sort((a, b) => {
     const impactA = (100 - percents[a.id]) * a.weight;
     const impactB = (100 - percents[b.id]) * b.weight;
@@ -809,34 +805,39 @@ function getGoalAdvice(percents, overall, target, ptsNeeded) {
   const maxGain = (100 - percents[best.id]) * best.weight;
 
   if (maxGain < ptsNeeded) {
-    // Need multiple categories — show the top two
+    // Can't do it with one category — name the top two
     const second = ranked[1];
-    if (second) {
-      return `Focus on <strong>${best.name}</strong> and <strong>${second.name}</strong> — those have the biggest impact on your grade.`;
-    }
-    return `You'll need to improve across <em>all categories</em>. Focus on <strong>${best.name}</strong> first.`;
+    const names  = second
+      ? `<strong>${best.name}</strong> and <strong>${second.name}</strong>`
+      : `<strong>all categories</strong>`;
+    return `You'll need to improve ${names}. Keep working hard on everything!`;
   }
 
-  // How many percentage points does this category need to go up?
-  const pctIncreaseNeeded = ptsNeeded / best.weight;
-  const newPct            = Math.min(100, percents[best.id] + pctIncreaseNeeded);
+  // What % does the best category need to reach, keeping everything else the same?
+  // overall = sum of (pct * weight) for all entered cats / totalWeight
+  // We want newOverall >= target.min
+  // Solve for newBestPct:
+  //   target.min * totalWeight = (sum of other cats) + newBestPct * best.weight
+  const totalWeight  = entered.reduce((s, c) => s + c.weight, 0);
+  const otherSum     = entered
+    .filter(c => c.id !== best.id)
+    .reduce((s, c) => s + percents[c.id] * c.weight, 0);
+  const neededPct    = Math.min(100, ((target.min * totalWeight) - otherSum) / best.weight);
 
-  // Convert to real points using the total the student entered
-  const totalInput = parseFloat(document.getElementById(best.id + '-total').value);
-  const earnedInput = parseFloat(document.getElementById(best.id + '-earned').value);
+  const keptSame = entered
+    .filter(c => c.id !== best.id)
+    .map(c => c.name)
+    .join(' and ');
 
-  if (!isNaN(totalInput) && totalInput > 0) {
-    const currentPoints  = earnedInput;
-    const neededPoints   = Math.ceil((newPct / 100) * totalInput);
-    const extraPoints    = Math.ceil(neededPoints - currentPoints);
-    return `Earn <strong style="font-size:15px">${extraPoints} more point${extraPoints === 1 ? '' : 's'} on ${best.name}</strong>
-            <span style="color:var(--muted);font-size:12px;display:block;margin-top:3px">
-              (${currentPoints} → ${neededPoints} out of ${totalInput})
-            </span>`;
-  }
+  const keepingText = keptSame
+    ? `Keeping your ${keptSame} the same, you need at least`
+    : `You need at least`;
 
-  // Fallback if total not available
-  return `Raise your <strong>${best.name}</strong> score from <strong>${percents[best.id].toFixed(0)}%</strong> to <strong>${newPct.toFixed(0)}%</strong>`;
+  return `
+    <span style="font-size:12px;color:#6b7280;display:block;line-height:1.4">${keepingText}</span>
+    <strong style="font-size:16px;display:block;margin:6px 0 4px;color:#1a1a2e;word-break:break-word;line-height:1.3">${neededPct.toFixed(1)}% on ${best.name}</strong>
+    <span style="font-size:11px;color:#6b7280;display:block">to get a ${target.letter} (you have ${percents[best.id].toFixed(1)}% now)</span>
+  `;
 }
 
 // =============================================
