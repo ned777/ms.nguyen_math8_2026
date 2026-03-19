@@ -90,6 +90,10 @@ function calculate() {
     letterEl.textContent = '?';
     pctEl.textContent    = '—%';
     labelEl.textContent  = 'Enter scores above to see your grade!';
+    ['teacher-img-l1','teacher-img-l2','teacher-img-r1','teacher-img-r2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.hidden = true;
+    });
     hideResults();
     return;
   }
@@ -102,6 +106,22 @@ function calculate() {
   letterEl.textContent = gradeInfo.letter;
   pctEl.textContent    = overall.toFixed(1) + '%';
   labelEl.textContent  = gradeLabel(gradeInfo, overall);
+
+  // ---- Update teacher images ----
+  const imgMap = { A: 'a.jpg', B: 'b.jpg', C: 'c.jpg', D: 'd.jpg', F: 'f.jpg' };
+  const imgSrc = imgMap[gradeInfo.letter];
+  ['teacher-img-l1','teacher-img-l2','teacher-img-r1','teacher-img-r2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.getAttribute('src') !== imgSrc) {
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = '';
+    }
+    el.src    = imgSrc;
+    el.hidden = false;
+    el.style.border = `4px solid ${gradeInfo.color}`;
+  });
 
   // ---- Step 3: Show weakness ----
   showWeakness(percents);
@@ -147,19 +167,18 @@ function showWeakness(percents) {
   const weakest = sorted[0];
   const weakPct = percents[weakest.id];
 
-  // How much could raising this category help?
-  const potentialGain = (100 - weakPct) * weakest.weight;
+  // Hide if all categories are 90%+
+  if (weakPct >= 90) { card.hidden = true; return; }
 
   let msg = '';
-
   if (weakPct < 60) {
-    msg = `Your <strong>${weakest.name}</strong> is at ${weakPct.toFixed(0)}% right now — that's your lowest category. This is your #1 thing to work on! 💪`;
+    msg = `Your <strong>${weakest.name}</strong> is at ${weakPct.toFixed(1)}% right now — that's your lowest category. This is your #1 thing to work on! 💪`;
   } else if (weakPct < 70) {
-    msg = `Your <strong>${weakest.name}</strong> is at ${weakPct.toFixed(0)}% — that's below passing. Focus on bringing this up first!`;
+    msg = `Your <strong>${weakest.name}</strong> is at ${weakPct.toFixed(1)}% — that's below passing. Focus on bringing this up first!`;
   } else if (weakPct < 80) {
-    msg = `Your <strong>${weakest.name}</strong> is your lowest at ${weakPct.toFixed(0)}%, but you're passing! Push a little harder here to level up your grade.`;
+    msg = `Your <strong>${weakest.name}</strong> is your lowest at ${weakPct.toFixed(1)}%, but you're passing! Push a little harder here to level up your grade.`;
   } else {
-    msg = `All your categories look solid! Your lowest is <strong>${weakest.name}</strong> at ${weakPct.toFixed(0)}% — not bad at all! Keep it up.`;
+    msg = `Your <strong>${weakest.name}</strong> is your lowest category at ${weakPct.toFixed(1)}%. You're doing well — just keep it up!`;
   }
 
   textEl.innerHTML = msg;
