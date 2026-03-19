@@ -470,8 +470,8 @@ footer {
   .weight-legend { gap: 6px; }
   .chip { font-size: 11px; padding: 5px 12px; }
   h1 { font-size: clamp(28px, 7vw, 44px); }
-  .teacher-img { width: 65px !important; height: 65px !important; }
-  .teacher-row { gap: 6px !important; }
+  .teacher-img { width: 55px !important; height: 55px !important; }
+  .teacher-row { gap: 4px !important; }
   .grade-bubble { width: 100px !important; height: 100px !important; }
   .bubble-letter { font-size: 38px !important; }
   .bubble-pct { font-size: 12px !important; }
