@@ -146,7 +146,7 @@ In `style.css`, find the `:root` block at the top and edit the CSS variables:
 | Google Fonts | Fredoka One (headings) + Nunito (body) |
 
 No frameworks, no build tools, no dependencies — just open `index.html` in any browser.
-Or visit the published link: https://2026-math8.netlify.app (https://2026-math8.netlify.app).
+Or visit the published link: https://2026-math8.netlify.app.
 
 ---
 
