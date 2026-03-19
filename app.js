@@ -37,7 +37,7 @@ function getCategoryPercent(catId) {
   const earned = parseFloat(document.getElementById(catId + '-earned').value);
   const total  = parseFloat(document.getElementById(catId + '-total').value);
   if (isNaN(earned) || isNaN(total) || total <= 0) return null;
-  return Math.min(100, (earned / total) * 100);
+  return (earned / total) * 100;
 }
 
 // Returns the grade object for a given percentage
@@ -68,7 +68,7 @@ function calculate() {
 
     if (pct !== null) {
       pctEl.textContent  = pct.toFixed(1) + '%';
-      barEl.style.width  = pct + '%';
+      barEl.style.width  = Math.min(100, pct) + '%';
       weightedSum       += pct * cat.weight;
       totalWeight       += cat.weight;
       anyEntered         = true;

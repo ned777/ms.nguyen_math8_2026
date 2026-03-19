@@ -451,7 +451,28 @@ footer {
 
 /* --- Responsive --- */
 @media (max-width: 500px) {
-  .cards-grid { grid-template-columns: 1fr 1fr; }
-  .goals-row  { flex-direction: column; }
-  .breakdown-label { min-width: 100px; font-size: 11px; }
+  .cards-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .score-card {
+    padding: 14px 10px 12px;
+  }
+  .card-emoji { font-size: 22px; }
+  .card-label { font-size: 14px; }
+  .card-weight { font-size: 11px; margin-bottom: 8px; }
+  .score-inputs { gap: 4px; }
+  .out-of { font-size: 10px; }
+  input[type="number"] { font-size: 13px; padding: 7px 4px; }
+  .cat-pct { font-size: 20px; }
+  .goals-row { flex-direction: column; }
+  .breakdown-label { min-width: 80px; font-size: 11px; }
+  .weight-legend { gap: 6px; }
+  .chip { font-size: 11px; padding: 5px 12px; }
+  h1 { font-size: clamp(28px, 7vw, 44px); }
+  .teacher-img { width: 65px !important; height: 65px !important; }
+  .teacher-row { gap: 6px !important; }
+  .grade-bubble { width: 100px !important; height: 100px !important; }
+  .bubble-letter { font-size: 38px !important; }
+  .bubble-pct { font-size: 12px !important; }
 }

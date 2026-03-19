@@ -490,10 +490,32 @@ footer {
 }
 
 /* --- Responsive --- */
-@media (max-width: 500px) {
-  .cards-grid { grid-template-columns: 1fr 1fr; }
-  .goals-row  { flex-direction: column; }
-  .breakdown-label { min-width: 100px; font-size: 11px; }
+@media (max-width: 600px) {
+  .cards-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .score-card { padding: 14px 10px 12px; }
+  .card-emoji { font-size: 22px; }
+  .card-label { font-size: 14px; }
+  .card-weight { font-size: 11px; margin-bottom: 8px; }
+  .score-inputs { gap: 4px; }
+  .out-of { font-size: 10px; }
+  input[type="number"] { font-size: 13px; padding: 7px 4px; }
+  .cat-pct { font-size: 20px; }
+  .goals-row { flex-direction: column; }
+  .breakdown-label { min-width: 80px; font-size: 11px; }
+  .weight-legend { gap: 6px; }
+  .chip { font-size: 11px; padding: 5px 12px; }
+  h1 { font-size: clamp(28px, 7vw, 44px); }
+  /* On mobile: show only 1 image each side */
+  .teacher-img:nth-child(2) { display: none; }
+  .teacher-img { width: 70px !important; height: 70px !important; }
+  .teacher-row { gap: 8px !important; }
+  .grade-bubble { width: 100px !important; height: 100px !important; }
+  .bubble-letter { font-size: 38px !important; }
+  .bubble-pct { font-size: 12px !important; }
+  .grade-label { font-size: 14px; }
 }
 
 </style>
@@ -660,7 +682,7 @@ function getCategoryPercent(catId) {
   const earned = parseFloat(document.getElementById(catId + '-earned').value);
   const total  = parseFloat(document.getElementById(catId + '-total').value);
   if (isNaN(earned) || isNaN(total) || total <= 0) return null;
-  return Math.min(100, (earned / total) * 100);
+  return (earned / total) * 100;
 }
 
 // Returns the grade object for a given percentage
@@ -691,7 +713,7 @@ function calculate() {
 
     if (pct !== null) {
       pctEl.textContent  = pct.toFixed(1) + '%';
-      barEl.style.width  = pct + '%';
+      barEl.style.width  = Math.min(100, pct) + '%';
       weightedSum       += pct * cat.weight;
       totalWeight       += cat.weight;
       anyEntered         = true;
@@ -791,11 +813,13 @@ function showWeakness(percents) {
   const weakest = sorted[0];
   const weakPct = percents[weakest.id];
 
-  // How much could raising this category help?
-  const potentialGain = (100 - weakPct) * weakest.weight;
+  // If everything is 90%+ hide the weakness card entirely
+  if (weakPct >= 90) {
+    card.hidden = true;
+    return;
+  }
 
   let msg = '';
-
   if (weakPct < 60) {
     msg = `Your <strong>${weakest.name}</strong> is at ${weakPct.toFixed(1)}% right now — that's your lowest category. This is your #1 thing to work on! 💪`;
   } else if (weakPct < 70) {
@@ -803,7 +827,7 @@ function showWeakness(percents) {
   } else if (weakPct < 80) {
     msg = `Your <strong>${weakest.name}</strong> is your lowest at ${weakPct.toFixed(1)}%, but you're passing! Push a little harder here to level up your grade.`;
   } else {
-    msg = `All your categories look solid! Your lowest is <strong>${weakest.name}</strong> at ${weakPct.toFixed(1)}% — not bad at all! Keep it up.`;
+    msg = `Your <strong>${weakest.name}</strong> is your lowest category at ${weakPct.toFixed(1)}%. You're doing well — just keep it up!`;
   }
 
   textEl.innerHTML = msg;
@@ -930,7 +954,7 @@ function showBreakdown(percents) {
       <span class="breakdown-label">${cat.name}</span>
       <div class="breakdown-bar-bg">
         <div class="breakdown-bar-fill"
-             style="background:${cat.color}; width:${pct !== null ? pct : 0}%">
+             style="background:${cat.color}; width:${pct !== null ? Math.min(100, pct) : 0}%">
         </div>
       </div>
       <span class="breakdown-val">
