@@ -5,10 +5,10 @@
 
 // --- Grade weights from the syllabus ---
 const CATEGORIES = [
-  { id: 'test', name: 'Tests',              weight: 0.35, color: '#6366f1' },
-  { id: 'hw',   name: 'Homework',           weight: 0.30, color: '#ec4899' },
-  { id: 'cq',   name: 'Classwork/Quizzes',  weight: 0.25, color: '#0ea5e9' },
-  { id: 'proj', name: 'Projects',           weight: 0.10, color: '#10b981' },
+  { id: 'test', name: 'Tests',     weight: 0.40, color: '#6366f1' },
+  { id: 'hw',   name: 'Homework',  weight: 0.30, color: '#ec4899' },
+  { id: 'cq',   name: 'Quizzes',   weight: 0.20, color: '#0ea5e9' },
+  { id: 'proj', name: 'Projects',  weight: 0.10, color: '#10b981' },
 ];
 
 // --- Grade scale ---
