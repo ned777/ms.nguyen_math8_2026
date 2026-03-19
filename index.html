@@ -253,45 +253,33 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 /* Grade Bubble */
 .grade-bubble-wrap {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-}
-
-.teacher-row {
-  display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.teacher-imgs-left,
-.teacher-imgs-right {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+.grade-bubble-wrap .grade-label {
+  width: 100%;
+  text-align: center;
 }
 
 .teacher-img {
-  width: 130px;
-  height: 130px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   object-fit: cover;
-  object-position: top center;
-  object-position: 50% 15%;
+  object-position: top;
   box-shadow: var(--shadow-lg);
-  border: none;
+  border: 4px solid var(--white);
+  transition: opacity .4s, transform .4s;
   animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
 }
 
 @keyframes popIn {
   from { transform: scale(0.7); opacity: 0; }
   to   { transform: scale(1);   opacity: 1; }
-}
-
-@media (max-width: 600px) {
-  .teacher-img { width: 65px; height: 65px; }
-  .teacher-row { gap: 8px; }
 }
 
 .grade-bubble {
@@ -576,20 +564,12 @@ footer {
 
       <!-- Current grade bubble -->
       <div class="grade-bubble-wrap">
-        <div class="teacher-row">
-          <div class="teacher-imgs-left">
-            <img class="teacher-img" id="teacher-img-l1" src="" alt="Ms. Nguyen" hidden>
-            <img class="teacher-img" id="teacher-img-l2" src="" alt="Ms. Nguyen" hidden>
-          </div>
-          <div class="grade-bubble" id="grade-bubble">
-            <div class="bubble-letter" id="bubble-letter">?</div>
-            <div class="bubble-pct" id="bubble-pct">—%</div>
-          </div>
-          <div class="teacher-imgs-right">
-            <img class="teacher-img" id="teacher-img-r1" src="" alt="Ms. Nguyen" hidden>
-            <img class="teacher-img" id="teacher-img-r2" src="" alt="Ms. Nguyen" hidden>
-          </div>
+        <img class="teacher-img" id="teacher-img-left" src="" alt="Ms. Nguyen" hidden>
+        <div class="grade-bubble" id="grade-bubble">
+          <div class="bubble-letter" id="bubble-letter">?</div>
+          <div class="bubble-pct" id="bubble-pct">—%</div>
         </div>
+        <img class="teacher-img" id="teacher-img-right" src="" alt="Ms. Nguyen" hidden>
         <div class="grade-label" id="grade-label">Enter scores above to see your grade!</div>
       </div>
 
@@ -713,10 +693,8 @@ function calculate() {
     letterEl.textContent = '?';
     pctEl.textContent    = '—%';
     labelEl.textContent  = 'Enter scores above to see your grade!';
-    document.getElementById('teacher-img-l1').hidden = true;
-    document.getElementById('teacher-img-l2').hidden = true;
-    document.getElementById('teacher-img-r1').hidden = true;
-    document.getElementById('teacher-img-r2').hidden = true;
+    document.getElementById('teacher-img-left').hidden  = true;
+    document.getElementById('teacher-img-right').hidden = true;
     hideResults();
     return;
   }
@@ -733,18 +711,15 @@ function calculate() {
   // ---- Update teacher image ----
   const imgMap = { A: 'a.jpg', B: 'b.jpg', C: 'c.jpg', D: 'd.jpg', F: 'f.jpg' };
   const imgSrc = imgMap[gradeInfo.letter];
-  ['teacher-img-l1', 'teacher-img-l2', 'teacher-img-r1', 'teacher-img-r2',
-   'teacher-img-left', 'teacher-img-right'].forEach(id => {
+  ['teacher-img-left', 'teacher-img-right'].forEach(id => {
     const el = document.getElementById(id);
-    if (!el) return;
-    if (el.getAttribute('src') !== imgSrc) {
+    if (el.src.split('/').pop() !== imgSrc) {
       el.style.animation = 'none';
-      el.offsetHeight;
+      el.offsetHeight; // reflow to restart animation
       el.style.animation = '';
     }
     el.src    = imgSrc;
     el.hidden = false;
-    el.style.border = `4px solid ${gradeInfo.color}`;
   });
 
   // ---- Step 3: Show weakness ----
@@ -764,7 +739,7 @@ function calculate() {
 function gradeLabel(gradeInfo, overall) {
   const msgs = {
     A: `You're crushing it! 🎉 Keep it up!`,
-    B: `Great job! You're almost at an A! 💪`,
+    B: `Great job! You're doing great! 💪`,
     C: `You passed! But there's room to grow 🙂`,
     D: `Hang in there — you can turn this around! 📖`,
     F: `Don't give up! Every assignment helps. Let's fix this! 🔥`,
