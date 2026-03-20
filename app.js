@@ -175,6 +175,9 @@ function showWeakness(percents) {
   // Check if ALL entered categories are the same percentage (within 1%)
   const allSame = entered.every(c => Math.abs(percents[c.id] - weakPct) <= 1);
 
+  // If all equal and at B or above — no weakness, hide the card
+  if (allSame && weakPct >= 80) { card.hidden = true; return; }
+
   // Find all categories tied at the lowest percentage (within 1%)
   const tied = sorted.filter(c => percents[c.id] <= weakPct + 1);
 

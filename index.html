@@ -807,8 +807,8 @@ function calculate() {
 function gradeLabel(gradeInfo, overall) {
   const msgs = {
     A: `You're crushing it! 🎉 Keep it up!`,
-    B: `Great job! You're almost at an A! 💪`,
-    C: `You passed! But there's room to grow 🙂`,
+    B: `Well done! Keep pushing forward! 💪`,
+    C: `You're passing! But there's room to grow 🙂`,
     D: `Hang in there — you can turn this around! 📖`,
     F: `Don't give up! Every assignment helps. Let's fix this! 🔥`,
   };
@@ -841,6 +841,9 @@ function showWeakness(percents) {
 
   // Check if ALL entered categories are the same percentage (within 1%)
   const allSame = entered.every(c => Math.abs(percents[c.id] - weakPct) <= 1);
+
+  // If all equal and at B or above — no weakness, hide the card
+  if (allSame && weakPct >= 80) { card.hidden = true; return; }
 
   // Find all categories tied at the lowest percentage (within 1%)
   const tied = sorted.filter(c => percents[c.id] <= weakPct + 1);
