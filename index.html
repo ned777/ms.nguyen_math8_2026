@@ -689,7 +689,7 @@ const GRADES = [
 
 // --- Tips per category ---
 const TIPS = {
-  test:  '💡 Tip: Study your old tests and redo the problems you missed. Tutoring is available with Ms. Nguyen — schedule an appointment!',
+  test:  '💡 Tip: Study your old tests and redo the problems you missed. Come to tutoring on Tues & Thurs (2:30–3:00 PM) for extra help!',
   hw:    '💡 Tip: Turn in ALL your homework — even late work gets half credit! Every point adds up.',
   cq:    '💡 Tip: Pay attention in class, take notes, and join in group discussions. Those classwork points are easy wins!',
   proj:  '💡 Tip: Make sure every part of your project is complete and turned in on time. Check Canvas for the rubric!',
@@ -837,19 +837,54 @@ function showWeakness(percents) {
   // Hide if all categories are 90%+
   if (weakPct >= 90) { card.hidden = true; return; }
 
+  card.hidden = false;
+
+  // Check if ALL entered categories are the same percentage (within 1%)
+  const allSame = entered.every(c => Math.abs(percents[c.id] - weakPct) <= 1);
+
+  // Find all categories tied at the lowest percentage (within 1%)
+  const tied = sorted.filter(c => percents[c.id] <= weakPct + 1);
+
   let msg = '';
-  if (weakPct < 60) {
-    msg = `Your <strong>${weakest.name}</strong> is at ${weakPct.toFixed(1)}% right now — that's your lowest category. This is your #1 thing to work on! 💪`;
-  } else if (weakPct < 70) {
-    msg = `Your <strong>${weakest.name}</strong> is at ${weakPct.toFixed(1)}% — that's below passing. Focus on bringing this up first!`;
-  } else if (weakPct < 80) {
-    msg = `Your <strong>${weakest.name}</strong> is your lowest at ${weakPct.toFixed(1)}%, but you're passing! Push a little harder here to level up your grade.`;
+
+  if (allSame) {
+    // All categories are equal — message depends on grade level
+    if (weakPct >= 80) {
+      msg = `You're at <strong>${weakPct.toFixed(1)}%</strong> across all your categories. Good work — keep striving for that A!`;
+    } else if (weakPct >= 70) {
+      msg = `All your categories are at <strong>${weakPct.toFixed(1)}%</strong>. You're passing but every category needs work — push them all up together to reach a B!`;
+    } else if (weakPct >= 60) {
+      msg = `All your categories are at <strong>${weakPct.toFixed(1)}%</strong>. Everything needs improvement to get to passing — you can do it!`;
+    } else {
+      msg = `All your categories are at <strong>${weakPct.toFixed(1)}%</strong>. Every assignment counts — turn in your work and come to tutoring!`;
+    }
+  } else if (tied.length > 1) {
+    const names = tied.map(c => `<strong>${c.name}</strong>`).join(' and ');
+    if (weakPct < 60) {
+      msg = `Your ${names} are both at ${weakPct.toFixed(1)}% — these are your lowest categories. Focus on both to improve your grade!`;
+    } else if (weakPct < 70) {
+      msg = `Your ${names} are tied at ${weakPct.toFixed(1)}% — both are below passing. Bring these up first!`;
+    } else if (weakPct < 80) {
+      msg = `Your ${names} are your lowest at ${weakPct.toFixed(1)}%, but you're passing! Work on either one to level up your grade.`;
+    } else {
+      msg = `Your ${names} are your lowest categories at ${weakPct.toFixed(1)}%. You're doing well — just keep it up!`;
+    }
   } else {
-    msg = `Your <strong>${weakest.name}</strong> is your lowest category at ${weakPct.toFixed(1)}%. You're doing well — just keep it up!`;
+    if (weakPct < 60) {
+      msg = `Your <strong>${weakest.name}</strong> is at ${weakPct.toFixed(1)}% right now — that's your lowest category. This is your #1 thing to work on!`;
+    } else if (weakPct < 70) {
+      msg = `Your <strong>${weakest.name}</strong> is at ${weakPct.toFixed(1)}% — that's below passing. Focus on bringing this up first!`;
+    } else if (weakPct < 80) {
+      msg = `Your <strong>${weakest.name}</strong> is your lowest at ${weakPct.toFixed(1)}%, but you're passing! Push a little harder here to level up your grade.`;
+    } else {
+      msg = `Your <strong>${weakest.name}</strong> is your lowest category at ${weakPct.toFixed(1)}%. You're doing well — just keep it up!`;
+    }
   }
 
   textEl.innerHTML = msg;
-  tipEl.textContent = TIPS[weakest.id];
+  // Only show the tip box when there's a specific category weakness
+  tipEl.hidden = allSame;
+  if (!allSame) tipEl.textContent = TIPS[weakest.id];
 }
 
 // =============================================
@@ -942,10 +977,27 @@ function getGoalAdvice(percents, overall, target, ptsNeeded) {
     ? `Keeping your ${keptSame} the same, you need at least`
     : `You need at least`;
 
+  // Check if a second category could also achieve the goal
+  let altHTML = '';
+  if (ranked.length > 1) {
+    const second    = ranked[1];
+    const maxGain2  = (100 - percents[second.id]) * second.weight;
+    if (maxGain2 >= ptsNeeded) {
+      const otherSum2  = entered
+        .filter(c => c.id !== second.id)
+        .reduce((s, c) => s + percents[c.id] * c.weight, 0);
+      const neededPct2 = Math.min(100, ((target.min * totalWeight) - otherSum2) / second.weight);
+      altHTML = `<span style="font-size:11px;color:#6b7280;display:block;margin-top:6px;padding-top:6px;border-top:1px solid #e5e7eb">
+        — or raise <strong>${second.name}</strong> to <strong>${neededPct2.toFixed(1)}%</strong> (you have ${percents[second.id].toFixed(1)}% now)
+      </span>`;
+    }
+  }
+
   return `
     <span style="font-size:12px;color:#6b7280;display:block;line-height:1.4">${keepingText}</span>
     <strong style="font-size:16px;display:block;margin:6px 0 4px;color:#1a1a2e;word-break:break-word;line-height:1.3">${neededPct.toFixed(1)}% on ${best.name}</strong>
     <span style="font-size:11px;color:#6b7280;display:block">to get a ${target.letter} (you have ${percents[best.id].toFixed(1)}% now)</span>
+    ${altHTML}
   `;
 }
 
