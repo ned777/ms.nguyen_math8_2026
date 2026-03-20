@@ -62,12 +62,21 @@ Math 8/
 
 ## How to Deploy (Netlify)
 
-1. Go to [netlify.com](https://netlify.com) and log in
-2. Drag and drop your **Math 8** folder onto the Netlify dashboard
-3. Netlify gives you a URL like `room209-grades.netlify.app`
-4. Share the link with students!
+This site is deployed via **GitHub → Netlify**. Netlify is linked to the GitHub repository and redeploys automatically on every push.
 
-> To update the site, just drag and drop the updated files again.
+### First-time setup
+1. Push the project files to a GitHub repository
+2. Go to [netlify.com](https://netlify.com) and log in
+3. Click **Add new site → Import an existing project** and choose **GitHub**
+4. Select your repository to link it to Netlify
+5. Leave build settings blank (no build command needed — it's plain HTML/CSS/JS)
+6. Click **Deploy site** — Netlify gives you a URL like `2026-math8.netlify.app`
+7. Share the link with students!
+
+### To update the site
+1. Edit your files locally
+2. Push to GitHub (`git add`, `git commit`, `git push`)
+3. Netlify automatically detects the push and redeploys — no manual steps needed
 
 ---
 
